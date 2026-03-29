@@ -19,19 +19,19 @@ static void freelist(node *cur) {
 
 
 static node *alloc_node(char *key, char *value) {
-    node *n = malloc(sizeof(node));
-    n->key = key;
-    n->value = value;
-    n->next = NULL;
+    node *n     = malloc(sizeof(node));
+    n->key      = key;
+    n->value    = value;
+    n->next     = NULL;
     return n;
 }
 
 static int hash(const char *key) {
     int hashval = 0;
     int len = strlen(key);
+
     for (int i = 0 ; i < len ; i++)
         hashval = 37 * hashval + key[i];
-
     hashval %= MAP_SIZE;
     if (hashval < 0)
         hashval += MAP_SIZE;
@@ -89,21 +89,21 @@ void hm_put(hashmap *hm, char *key, char *value) {
 }
 
 const char *hm_get(hashmap *hm, const char *key) {
-    pthread_mutex_lock(&hm->mutex);
+    const char *ret;
     int idx = hash(key);
+    pthread_mutex_lock(&hm->mutex);
 
     node *cur;
     for (cur = hm->table[idx];
             cur && strcmp(cur->key, key) != 0;
             cur = cur->next);
-
-    const char *ret;
     if (cur && strcmp(cur->key, key) == 0) {
         ret = cur->value;
     }
     else {
         ret = NULL;
     }
+
     pthread_mutex_unlock(&hm->mutex);
     return ret;
 }
@@ -111,7 +111,6 @@ const char *hm_get(hashmap *hm, const char *key) {
 size_t hm_size(hashmap *hm) { return hm->size; }
 
 hashmap *hm_create(char **env) {
-
     hashmap *hm = malloc(sizeof(hashmap));
     initmap(hm);
 
