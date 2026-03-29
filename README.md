@@ -4,7 +4,7 @@ A lightweight C library that loads a process's environment variables into a thre
 
 ## How it works
 
-When a C program receives its environment as a `char **env` array, each entry is a single string in the form `KEY=VALUE`. This library copies those strings, splits them on `=` using `strtok`, and inserts the resulting key/value pairs into a chained hash table (100 buckets, polynomial rolling hash). All operations are protected by a `pthread` mutex, making the map safe to read from multiple threads.
+When a C program receives its environment as a `char **env` array, each entry is a single string in the form `KEY=VALUE`. This library copies those strings, splits them on `=` using `strtok`, and inserts the resulting key/value pairs into a chained hash table. The table has a fixed size (default 100 buckets, configurable via macro in env.h), and uses a polynomial rolling hash (source Mark Weiss). The API does expose a put operation to add to the hash table, though it never rehashes as I expect that to be a rare event (the purpose of this utility is to access pre-existing environment variables more easily). All operations are protected by a `pthread` mutex, making the map safe to read from multiple threads.
 
 ## API
 
