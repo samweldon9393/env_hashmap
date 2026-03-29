@@ -25,7 +25,7 @@ void destroymap(hashmap *hm);
 ## Building
 
 ```bash
-make          # builds env.a (static library) and env_driver (demo binary)
+make          # builds env.a (static library) and example (demo binary)
 make clean    # remove build artifacts
 ```
 
@@ -59,5 +59,5 @@ gcc -o myprogram myprogram.c env.a -lpthread
 |------|-------------|
 | `env.h` | Public header — types and function declarations |
 | `env.c` | Hash table implementation |
-| `env_driver.c` | Demo program |
+| `example.c` | Demo program |
 | `Makefile` | Build rules |
