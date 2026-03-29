@@ -9,4 +9,4 @@ env.a: env.o env.h
 env.o: env.h
 
 clean:
-	rm -f *.o *.a env_driver
+	rm -f *.o *.a example
