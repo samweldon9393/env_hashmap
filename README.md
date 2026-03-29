@@ -15,6 +15,9 @@ hashmap *get_env_hm(char **env);
 // Look up a variable — returns NULL if not found
 const char *hm_get(hashmap *hm, const char *key);
 
+// Get the current size of the hashmap
+size_t hm_size(hashmap *hm);
+
 // Insert or overwrite a key/value pair
 void hm_put(hashmap *hm, char *key, char *value);
 
