@@ -25,7 +25,7 @@ typedef struct hashmap {
 void hm_put(hashmap *hm, char *key, char *value);
 
 /*
- * Get the value for a given key. NULL if key not in map.
+ * Get the value for a given key. NULL if key not in map
  */
 const char *hm_get(hashmap *hm, const char *key);
 
