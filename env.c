@@ -7,7 +7,8 @@
 static void freelist(node *cur) {
     if (cur == NULL)
         return;
-    node *next = cur->next;
+    node    *next = cur->next;
+
     if (cur->key) {
         if (!are_same_alloc(cur->key, cur->value))
             free(cur->value);
@@ -19,16 +20,18 @@ static void freelist(node *cur) {
 
 
 static node *alloc_node(char *key, char *value) {
-    node *n     = malloc(sizeof(node));
-    n->key      = key;
-    n->value    = value;
-    n->next     = NULL;
+    node    *n;
+
+    n        = malloc(sizeof(node));
+    n->key   = key;
+    n->value = value;
+    n->next  = NULL;
     return n;
 }
 
 static int hash(const char *key) {
-    int hashval = 0;
-    int len = strlen(key);
+    int     hashval = 0;
+    int     len = strlen(key);
 
     for (int i = 0 ; i < len ; i++)
         hashval = 37 * hashval + key[i];
@@ -48,15 +51,18 @@ static void initmap(hashmap *hm) {
 /* API functions */
 
 void hm_put(hashmap *hm, char *key, char *value) {
-    int idx;
-    node *cur, *prev = NULL;
+    int     idx;
+    node    *cur, *prev = NULL;
     pthread_mutex_lock(&hm->mutex);
 
+    /* hm owns the lifetime of all its members, so we duplicate the strings */
     key = strdup(key);
+    /* value == NULL signals key is a string in the form "KEY=VALUE" */
     if (value == NULL) {
         key = strtok(key, "=");
         value = strtok(NULL, "=");
     }
+    /* Otherwise, if user has passed an actual value, no need to tokenize key */
     else
         value = strdup(value);
     idx = hash(key);
@@ -89,11 +95,11 @@ void hm_put(hashmap *hm, char *key, char *value) {
 }
 
 const char *hm_get(hashmap *hm, const char *key) {
+    node       *cur;
     const char *ret;
-    int idx = hash(key);
+    int        idx = hash(key);
     pthread_mutex_lock(&hm->mutex);
 
-    node *cur;
     for (cur = hm->table[idx];
             cur && strcmp(cur->key, key) != 0;
             cur = cur->next);
@@ -111,11 +117,12 @@ const char *hm_get(hashmap *hm, const char *key) {
 size_t hm_size(hashmap *hm) { return hm->size; }
 
 hashmap *hm_create(char **env) {
-    hashmap *hm = malloc(sizeof(hashmap));
+    hashmap     *hm = malloc(sizeof(hashmap));
     initmap(hm);
 
     for (char **e = env; *e; e++) {
         if (*e)
+            /* Passing NULL as third arg makes hm_put tokenize the second arg */
             hm_put(hm, *e, NULL);
     }
 
@@ -124,8 +131,10 @@ hashmap *hm_create(char **env) {
 
 void hm_destroy(hashmap *hm) {
     pthread_mutex_lock(&hm->mutex);
+
     for (int i = 0 ; i < MAP_SIZE ; i++)
         freelist(hm->table[i]);
+
     pthread_mutex_unlock(&hm->mutex);
     free(hm);
 }
