@@ -1,8 +1,6 @@
 #ifndef _ENV_H
 #define _ENV_H
 
-#include <stdlib.h>
-#include <string.h>
 #include <pthread.h>
 
 #define MAP_SIZE 100

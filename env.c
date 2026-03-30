@@ -1,3 +1,5 @@
+#include <stdlib.h>
+#include <string.h>
 #include "env.h"
 
 #define are_same_alloc(k, v) ((v - k) == (strlen(k) + 1))
